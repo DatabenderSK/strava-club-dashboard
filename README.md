@@ -13,7 +13,7 @@ Free, open-source weekly statistics dashboard for any Strava cycling club. Auto-
 - Fully responsive (mobile + desktop)
 - No database needed — JSON file storage
 
-![Dashboard preview](https://img.shields.io/badge/demo-live_dashboard-FC4C02?style=for-the-badge)
+**[Live Demo](https://kcmi.sk/strava/)** — see it in action for Klub cyklistov Michalovce (Slovak cycling club)
 
 ---
 
