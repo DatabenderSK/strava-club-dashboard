@@ -15,6 +15,8 @@ Free, open-source weekly statistics dashboard for any Strava cycling club. Auto-
 
 **[Live Demo](https://kcmi.sk/strava/)** — see it in action for Klub cyklistov Michalovce (Slovak cycling club)
 
+![Strava Club Dashboard Screenshot](screenshot.webp)
+
 ---
 
 ## Quick Start (5 minutes)
