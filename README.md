@@ -21,7 +21,12 @@ Free, open-source weekly statistics dashboard for any Strava cycling club. Auto-
 
 ## Quick Start (5 minutes)
 
-### 1. Create a Strava API Application
+### 1. Fork This Repository
+
+1. Click the **Fork** button at the top of this page
+2. This creates your own copy of the project
+
+### 2. Create a Strava API Application
 
 1. Go to [strava.com/settings/api](https://www.strava.com/settings/api)
 2. Create a new application:
@@ -31,11 +36,11 @@ Free, open-source weekly statistics dashboard for any Strava cycling club. Auto-
    - **Authorization Callback Domain:** `localhost`
 3. Note your **Client ID** and **Client Secret**
 
-### 2. Get Your Refresh Token
+### 3. Get Your Refresh Token
 
 ```bash
-# Clone this repo
-git clone https://github.com/DatabenderSK/strava-club-dashboard.git
+# Clone your forked repo
+git clone https://github.com/YOUR_USERNAME/strava-club-dashboard.git
 cd strava-club-dashboard
 
 # Install dependencies
@@ -53,7 +58,7 @@ The wizard will:
 5. Copy the full URL from your browser and paste it back
 6. You get your `STRAVA_REFRESH_TOKEN`
 
-### 3. Find Your Club ID
+### 4. Find Your Club ID
 
 Open your Strava club page. The URL looks like:
 ```
@@ -61,7 +66,7 @@ https://www.strava.com/clubs/123456
                              ^^^^^^ this is your CLUB_ID
 ```
 
-### 4. Configure
+### 5. Test Locally (Optional)
 
 Copy the example config and fill in your values:
 
@@ -81,32 +86,37 @@ WEATHER_LON=21.92
 TIMEZONE=Europe/Bratislava
 ```
 
-### 5. Generate Your Dashboard
-
+Generate and preview:
 ```bash
 python3 generate.py
 ```
 
-Open `dashboard/index.html` in your browser. Done!
+Open `dashboard/index.html` in your browser to verify it works.
+
+> **Note:** The `.env` file is for local testing only. For automatic updates via GitHub Actions, you need to set up GitHub Secrets (see next section).
 
 ---
 
 ## Auto-Update with GitHub Actions + GitHub Pages (Free Hosting)
 
-### Set Up Secrets
+### Set Up GitHub Secrets (Required)
 
-In your GitHub repo, go to **Settings → Secrets and variables → Actions** and add:
+The dashboard auto-updates every hour via GitHub Actions. **It will only run after you add your secrets** — without them, the workflow is safely skipped (no errors, no emails).
 
-| Secret | Value |
-|--------|-------|
-| `STRAVA_CLIENT_ID` | Your Strava app Client ID |
-| `STRAVA_CLIENT_SECRET` | Your Strava app Client Secret |
-| `STRAVA_REFRESH_TOKEN` | Token from setup wizard |
-| `STRAVA_CLUB_ID` | Your club ID number |
-| `CLUB_NAME` | Your club name (optional) |
-| `WEATHER_LAT` | Latitude for weather (optional) |
-| `WEATHER_LON` | Longitude for weather (optional) |
-| `TIMEZONE` | Your timezone (optional, default: America/New_York) |
+In your forked repo, go to **Settings → Secrets and variables → Actions → New repository secret** and add each one:
+
+| Secret | Required | Value |
+|--------|----------|-------|
+| `STRAVA_CLIENT_ID` | **Yes** | Your Strava app Client ID (from step 2) |
+| `STRAVA_CLIENT_SECRET` | **Yes** | Your Strava app Client Secret (from step 2) |
+| `STRAVA_REFRESH_TOKEN` | **Yes** | Token from setup wizard (from step 3) |
+| `STRAVA_CLUB_ID` | **Yes** | Your club ID number (from step 4) |
+| `CLUB_NAME` | No | Display name for your club (default: "My Cycling Club") |
+| `WEATHER_LAT` | No | Latitude for weather widget (find at [latlong.net](https://www.latlong.net/)) |
+| `WEATHER_LON` | No | Longitude for weather widget |
+| `TIMEZONE` | No | Your timezone, e.g. `Europe/Bratislava` (default: `America/New_York`). [Full list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) |
+
+> **How to add a secret:** Go to your repo → Settings → Secrets and variables → Actions → click "New repository secret" → enter the name (e.g. `STRAVA_CLIENT_ID`) and the value → click "Add secret". Repeat for each secret.
 
 ### Enable GitHub Pages
 
@@ -117,7 +127,15 @@ In your GitHub repo, go to **Settings → Secrets and variables → Actions** an
 
 Your dashboard will be live at `https://yourusername.github.io/strava-club-dashboard/`
 
-The GitHub Action runs every hour and auto-commits updated data.
+### Verify It Works
+
+1. Go to the **Actions** tab in your repo
+2. Click **Update Strava Dashboard** on the left
+3. Click **Run workflow** → **Run workflow** (green button)
+4. Wait ~30 seconds — if it passes, your dashboard is being generated
+5. Check your GitHub Pages URL after a minute
+
+The workflow runs automatically every hour after this.
 
 ---
 
@@ -193,8 +211,17 @@ dashboard/history/    → Weekly JSON snapshots (auto-archived)
 
 ## Troubleshooting
 
+**GitHub Actions workflow is skipped (grey icon)**
+→ You haven't added the required GitHub Secrets yet. See [Set Up GitHub Secrets](#set-up-github-secrets-required) above.
+
+**"STRAVA AUTH ERROR: refresh token is likely expired"**
+→ Run `python3 setup_strava.py` again to get a new token. Then update the `STRAVA_REFRESH_TOKEN` secret in your repo settings.
+
+**"ERROR: Missing required config"**
+→ One or more required secrets are missing. Check that `STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET`, `STRAVA_REFRESH_TOKEN`, and `STRAVA_CLUB_ID` are all set in your repo's GitHub Secrets.
+
 **"401 Unauthorized" from Strava**
-→ Your refresh token may have expired. Run `python3 setup_strava.py` again.
+→ Your Client ID or Client Secret is incorrect. Double-check them at [strava.com/settings/api](https://www.strava.com/settings/api).
 
 **Empty dashboard (no activities)**
 → Check that your club has activities this week. The dashboard shows Monday–Sunday.
@@ -202,8 +229,8 @@ dashboard/history/    → Weekly JSON snapshots (auto-archived)
 **Weather not showing**
 → Check your `WEATHER_LAT`/`WEATHER_LON` values. Weather is optional — the dashboard works without it.
 
-**GitHub Actions not running**
-→ Make sure all required secrets are set. Check the Actions tab for error logs.
+**GitHub Actions not running at all**
+→ After forking, go to the **Actions** tab and enable workflows (GitHub disables them by default on forks).
 
 ---
 

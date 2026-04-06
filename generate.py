@@ -961,4 +961,11 @@ def generate():
 
 
 if __name__ == "__main__":
-    generate()
+    try:
+        generate()
+    except strava_client.StravaAuthError as e:
+        print(f"\n⚠️  STRAVA AUTH ERROR: {e}")
+        print("Dashboard not updated. Skipping this run.")
+    except Exception as e:
+        print(f"\n⚠️  UNEXPECTED ERROR: {e}")
+        print("Dashboard not updated. Skipping this run.")

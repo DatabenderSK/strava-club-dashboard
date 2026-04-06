@@ -4,12 +4,13 @@ on:
   schedule:
     # Every hour (Strava rate limit: 1000 req/day, script uses ~4)
     - cron: '0 * * * *'
-  push:
-    branches: [main]
   workflow_dispatch:   # Manual trigger via GitHub UI
 
 jobs:
   generate:
+    # Only run if Strava credentials are configured.
+    # This prevents failures in the template repo and fresh forks.
+    if: ${{ secrets.STRAVA_CLIENT_ID != '' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
